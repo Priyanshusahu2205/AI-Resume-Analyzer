@@ -1,0 +1,10 @@
+flask
+scikit-learn
+joblib
+sqlalchemy
+pymysql
+pdfplumber
+python-docx
+pandas
+python-dotenv
+matplotlib
