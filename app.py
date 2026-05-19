@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 from groq import Groq
 load_dotenv()
 
-username = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWORD")
+# username = os.getenv("DB_USER")
+# password = os.getenv("DB_PASSWORD")
 
 app = Flask(__name__)
 
@@ -20,10 +20,21 @@ model = joblib.load("model/resume_model.pkl")
 print("Model loaded. Classes:", model.classes_)
 
 
-from urllib.parse import quote_plus
-DATABASE_URL = f"mysql+pymysql://{username}:{quote_plus(password)}@localhost/resume_analyzer"
+
+DATABASE_URL = "sqlite:///resume.db"
 
 engine = create_engine(DATABASE_URL)
+
+with engine.connect() as connection:
+    connection.execute(text("""
+        CREATE TABLE IF NOT EXISTS resumes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            resume_text TEXT,
+            predicted_role TEXT,
+            score REAL
+        )
+    """))
+    connection.commit()
 
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 chat_history = []
